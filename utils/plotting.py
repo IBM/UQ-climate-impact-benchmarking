@@ -37,7 +37,7 @@ def plot_true_vs_predict(df, x, y, label, title, figname):
 
     return fig
 
-def plot_true_in_interval(df, sortby, figname):
+def plot_true_in_interval(df, sortby, figname=None, quantiles_lu=[0.1587, 0.8413], labels_lu=['R0 lower', 'R0 upper']):
 
     df_visu = df.sort_values(by=sortby).copy()
     
@@ -46,21 +46,19 @@ def plot_true_in_interval(df, sortby, figname):
     #plt.plot(range(len(y_test)), df_visu_std['R0 mean'], "bo", markersize=0.5)
 
     plt.fill_between(range(len(df)),
-        df_visu['R0 sigminus'], df_visu['R0 sigplus'], alpha=0.5, color="C3",
-        label="Quantiles 15.87 - 84.13")
+        df_visu[labels_lu[0]], df_visu[labels_lu[1]], alpha=0.5, color="C3",
+        label="Quantiles: "+str(quantiles_lu[0])+' - '+str(quantiles_lu[1]))
 
     plt.legend()
     plt.xlabel('Test samples sorted by $True\ ' + sortby +'$')
     plt.ylabel('R0')
-    fig.savefig(figname, bbox_inches='tight')
+    if figname:
+        fig.savefig(figname, bbox_inches='tight')
     
     return fig
 
 
-def plot_single_members(df, iforecasts, figname):
-    
-    
-
+def plot_single_members(df, iforecasts, figname=None, quantiles_lu=[0.1587, 0.8413], labels_lu=['R0 lower', 'R0 upper']):
 
     fig, axes = plt.subplots(len(iforecasts), 1, figsize=(7,7), sharex=True, sharey=True)
     for ax, iforecast in zip(axes, iforecasts):
@@ -68,8 +66,8 @@ def plot_single_members(df, iforecasts, figname):
         ax.xaxis.set_major_locator(mdates.MonthLocator())
         df_visu = df[df['forecast']==iforecast].copy()
         ax.fill_between(df_visu['date'],
-                         df_visu['R0 sigminus'], df_visu['R0 sigplus'], alpha=0.5, color="C3",
-                         label="Quantiles 15.87 - 84.13")
+                         df_visu[labels_lu[0]], df_visu[labels_lu[1]], alpha=0.5, color="C3",
+                         label="Quantiles: "+str(quantiles_lu[0])+' - '+str(quantiles_lu[1]))
 
         ax.plot(df_visu['date'], df_visu['R0'], label="Ensemble member "+str(iforecast))
         ax.set_ylabel('R0')
@@ -77,15 +75,18 @@ def plot_single_members(df, iforecasts, figname):
     
     fig.autofmt_xdate()
     ax.set_xlabel('Date')
-    fig.savefig(figname, bbox_inches='tight')
+    if figname:
+        fig.savefig(figname, bbox_inches='tight')
     
     return fig
     
     
-def aggregate_ensembles(df, figname):
-    df_assembled = df[['date', 'R0 mean', 'R0 sigminus', 'R0 sigplus']].copy()
-    df_assembled = df_assembled.groupby('date').agg({'R0 mean':'mean', 'R0 sigminus':'mean', 'R0 sigplus':'mean'})
+def aggregate_ensembles(df, figname=None, quantiles_lu=[0.1587, 0.8413], labels_lu=['R0 lower', 'R0 upper']):
+    
+    df_assembled = df[['date']+labels_lu].copy()
+    df_assembled = df_assembled.groupby('date').agg({labels_lu[0]:'mean', labels_lu[1]:'mean'})
 
+    """
     total = 0
     for idate in df['date'].unique():
         idf = df[df['date']==idate].copy()
@@ -95,20 +96,22 @@ def aggregate_ensembles(df, figname):
     print(total/len(df))
     print(total)
     print(len(df))
+    """
     
     fig, ax = plt.subplots(figsize=(5,4))
     ax.xaxis.set_major_formatter(mdates.DateFormatter('%m/%d/%Y'))
     ax.xaxis.set_major_locator(mdates.MonthLocator())
     ax.scatter(df['date'], df['R0'], c='C0', marker='o', s=0.5, label="True values")
     ax.fill_between(df_assembled.index,
-        df_assembled['R0 sigplus'], df_assembled['R0 sigminus'], alpha=0.5, color="C3",
-        label="Quantiles 15.87 - 84.13")
+        df_assembled[labels_lu[0]], df_assembled[labels_lu[1]], alpha=0.5, color="C3",
+        label="Quantiles: "+str(quantiles_lu[0])+' - '+str(quantiles_lu[1]) )
     fig.autofmt_xdate()
 
     plt.legend()
     ax.set_xlabel('Date')
     ax.set_ylabel('R0')
-    fig.savefig(figname, bbox_inches='tight')
+    if figname:
+        fig.savefig(figname, bbox_inches='tight')
     
     
 def aggregate_ensembles_samples(df, figname):

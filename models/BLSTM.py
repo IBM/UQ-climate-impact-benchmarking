@@ -122,6 +122,7 @@ def train_blstm(X_train, y_train, X_test, n_features, output_length, batch_size,
                        +str(batch_size)
                        +'.pth')
     else:
+        print('Loading model ...')
         bayesian_lstm = BayesianLSTM(n_features=n_features,
                                      output_length=output_length,
                                      batch_size = batch_size)

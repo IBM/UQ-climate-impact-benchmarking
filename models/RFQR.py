@@ -23,11 +23,15 @@ def train_rfqr(X_train, y_train, X_test, random_state, min_samples_split, n_esti
         if save_model:
             dump(rfqr, 'trained_models/RFQR_train2017-2020_predict2021.joblib') 
     else:
+        print('Loading model ...')
         rfqr = load('trained_models/'+load_model)
         
     y_pred = []
     for quantile, label in zip(quantiles, labels):
+        print('Predicting quantile:', label)
         y_pred.append(rfqr.predict(X_test, quantile=quantile*100))
-
-
+        print('End of predicting quantile:', label)
+        
+    y_pred = pd.DataFrame(np.array(y_pred_rfqr).T, columns=labels)
+    
     return(y_pred)
