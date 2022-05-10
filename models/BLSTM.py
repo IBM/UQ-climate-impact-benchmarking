@@ -6,6 +6,7 @@ import torch.nn.functional as F
 from torch.autograd import Variable
 import time
 import pandas as pd
+from tqdm import tqdm
 
 
 class BayesianLSTM(nn.Module):
@@ -76,12 +77,14 @@ def train_blstm(X_train, y_train, X_test, n_features, output_length, batch_size,
 
         bayesian_lstm.train()
 
-        loss_l=[]
+        loss_l = []
         times = []
-        for e in range(1, n_epochs+1):
+        epochs = tqdm(range(1, n_epochs+1))
+        for e in epochs:
+            epochs.set_description('Training model ... Epochs')
             start_epoch = time.time()
 
-            loss_l1 = []
+            #loss_l1 = []
             for b in range(0, len(X_train), batch_size):
                 torch_features = X_train[b:b+batch_size,:,:]
                 torch_target =  y_train[b:b+batch_size]    
@@ -104,14 +107,14 @@ def train_blstm(X_train, y_train, X_test, n_features, output_length, batch_size,
             #loss_l = np.append(loss_l, np.array(loss_l1).mean())
             #epoch_l =np.array(epoch_l) 
             #epoch_l = np.append(epoch_l, np.array([e]))
-
-            if e % 1 == 0:
-                print(loss.item())
-                loss_l += [loss.item()] 
+            
+            epochs.set_postfix(loss=loss.item())
+            loss_l += [loss.item()] 
 
         avg_time = sum(times)/n_epochs
-        print(avg_time)
-
+        print('Total time elapsed:', sum(times))
+        print('Average time per epoch:', avg_time)
+        
         if save_model:
             torch.save(bayesian_lstm.state_dict(),
                        'trained_models/BLSTM_train2017-2020_predict2021_e200_t0-01_seq'
@@ -121,6 +124,9 @@ def train_blstm(X_train, y_train, X_test, n_features, output_length, batch_size,
                        +'_bs'
                        +str(batch_size)
                        +'.pth')
+            
+        pd.DataFrame(loss_l, columns=['Loss']).to_csv('trained_models/blstm_loss.csv')
+
     else:
         print('Loading model ...')
         bayesian_lstm = BayesianLSTM(n_features=n_features,
@@ -130,24 +136,20 @@ def train_blstm(X_train, y_train, X_test, n_features, output_length, batch_size,
         bayesian_lstm.eval()
     
     ### Monte Carlo Dropout
-    y_test = pd.DataFrame()
-
-    print('MONTE CARLO DROPOUT')
-    for i in range(n_experiments):
-        print(str(i+1)+'/'+str(n_experiments))
-        experiment_predictions = bayesian_lstm.predict(X_test)
-        y_test['R0_{}'.format(i)] = target_scaler.inverse_transform(experiment_predictions)
-        
-    
-    
-    return(y_test)
+    experiment_predictions = []
+    experiments = tqdm(range(n_experiments))
+    for i in experiments:
+        experiments.set_description('Monte Carlo Dropout ... Experiments')
+        experiment_predictions.append(target_scaler.inverse_transform(bayesian_lstm.predict(X_test)))
+         
+    return(experiment_predictions)
 
 
 def calc_quantiles():
     
-    y_test_quantiles = []
+    y_pred_quantiles = []
     for quantile in quantiles:
-        y_test_quantiles.append(rfqr.predict(X_test, quantile=quantile))
+        y_pred_quantiles.append(rfqr.predict(X_test, quantile=quantile))
         
     
         
