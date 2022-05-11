@@ -11,6 +11,7 @@ def train_rfqr(X_train, y_train, X_test, random_state, min_samples_split, n_esti
     X_test = X_test.reshape(X_test.shape[0],-1)
 
     if load_model == None:
+        print('Training model ...')
         rfqr = RandomForestQuantileRegressor(random_state=random_state, 
                                              min_samples_split=min_samples_split, 
                                              n_estimators=n_estimators, 
@@ -21,7 +22,7 @@ def train_rfqr(X_train, y_train, X_test, random_state, min_samples_split, n_esti
         rfqr.fit(X_train, y_train)
 
         if save_model:
-            dump(rfqr, 'trained_models/RFQR_train2017-2020_predict2021.joblib') 
+            dump(rfqr, 'trained_models/RFQR_train2017-2020_predict2021_feat4.joblib') 
     else:
         print('Loading model ...')
         rfqr = load('trained_models/'+load_model)
