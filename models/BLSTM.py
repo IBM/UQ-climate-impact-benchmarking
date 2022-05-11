@@ -6,6 +6,7 @@ import torch.nn.functional as F
 from torch.autograd import Variable
 import time
 import pandas as pd
+import numpy as np
 from tqdm import tqdm
 
 
@@ -141,21 +142,20 @@ def train_blstm(X_train, y_train, X_test, n_features, output_length, batch_size,
     for i in experiments:
         experiments.set_description('Monte Carlo Dropout ... Experiments')
         experiment_predictions.append(target_scaler.inverse_transform(bayesian_lstm.predict(X_test)))
-         
-    return(experiment_predictions)
+     
+    y_pred = pd.DataFrame(np.array(experiment_predictions).T, 
+                          columns=['R0_'+str(i) for i in range(n_experiments)])
+
+    return(y_pred)
 
 
-def calc_quantiles():
+def calc_quantiles(y_pred, quantiles, labels):
     
     y_pred_quantiles = []
-    for quantile in quantiles:
-        y_pred_quantiles.append(rfqr.predict(X_test, quantile=quantile))
+    for quantile, label in zip(quantiles, labels):
+        print('Calculating '+label+' quantile:', quantile)
+        y_pred_quantiles.append(y_pred.quantile(quantile, axis=1).values)
         
+    y_pred_quantiles = pd.DataFrame(np.array(y_pred_quantiles).T, columns=labels)
     
-        
-    results = df_test.copy()
-    results['R0 mean'] = mean
-    results['R0 stdminus'] = sigmaminus
-    results['R0 stdplus'] = sigmaplus
-    
-    return()
+    return(y_pred_quantiles)

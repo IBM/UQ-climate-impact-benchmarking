@@ -4,6 +4,7 @@ sys.modules['sklearn.externals.six'] = six
 from skgarden import RandomForestQuantileRegressor
 from joblib import dump, load
 import pandas as pd
+import numpy as np
 
 def train_rfqr(X_train, y_train, X_test, random_state, min_samples_split, n_estimators, n_jobs, verbose=True, save_model=True, load_model=None, quantiles=[0.1587, 0.50, 0.8413], labels=['R0 lower', 'R0 mean', 'R0 upper']):
 
