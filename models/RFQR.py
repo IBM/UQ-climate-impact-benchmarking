@@ -6,7 +6,7 @@ from joblib import dump, load
 import pandas as pd
 import numpy as np
 
-def train_rfqr(X_train, y_train, X_test, random_state, min_samples_split, n_estimators, n_jobs, verbose=True, save_model=True, load_model=None, quantiles=[0.1587, 0.50, 0.8413], labels=['R0 lower', 'R0 mean', 'R0 upper']):
+def train_rfqr(X_train, y_train, X_test, random_state, min_samples_split, n_estimators, n_jobs, target_scaler, verbose=True, save_model=True, load_model=None, quantiles=[0.1587, 0.50, 0.8413], labels=['R0 lower', 'R0 mean', 'R0 upper']):
 
     X_train = X_train.reshape(X_train.shape[0],-1)
     X_test = X_test.reshape(X_test.shape[0],-1)
@@ -23,7 +23,7 @@ def train_rfqr(X_train, y_train, X_test, random_state, min_samples_split, n_esti
         rfqr.fit(X_train, y_train)
 
         if save_model:
-            dump(rfqr, 'trained_models/RFQR_train2017-2020_predict2021_feat4.joblib') 
+            dump(rfqr, 'trained_models/RFQR_train2017-2020_predict2021_feat4_excludeR0_predict50th.joblib') 
     else:
         print('Loading model ...')
         rfqr = load('trained_models/'+load_model)
@@ -31,9 +31,9 @@ def train_rfqr(X_train, y_train, X_test, random_state, min_samples_split, n_esti
     y_pred = []
     for quantile, label in zip(quantiles, labels):
         print('Predicting quantile:', label)
-        y_pred.append(rfqr.predict(X_test, quantile=quantile*100))
+        y_pred.append(target_scaler.inverse_transform(rfqr.predict(X_test, quantile=quantile*100)))
         print('End of predicting quantile:', label)
         
-    y_pred = pd.DataFrame(np.array(y_pred_rfqr).T, columns=labels)
+    y_pred = pd.DataFrame(np.array(y_pred).T, columns=labels)
     
     return(y_pred)
