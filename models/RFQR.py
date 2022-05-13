@@ -31,8 +31,10 @@ def train_rfqr(X_train, y_train, X_test, random_state, min_samples_split, n_esti
     y_pred = []
     for quantile, label in zip(quantiles, labels):
         print('Predicting quantile:', label)
-        y_pred.append(target_scaler.inverse_transform(rfqr.predict(X_test, quantile=quantile*100)))
-        print('End of predicting quantile:', label)
+        if target_scaler == None:
+            y_pred.append(rfqr.predict(X_test, quantile=quantile*100))
+        else:
+            y_pred.append(target_scaler.inverse_transform(rfqr.predict(X_test, quantile=quantile*100)))
         
     y_pred = pd.DataFrame(np.array(y_pred).T, columns=labels)
     

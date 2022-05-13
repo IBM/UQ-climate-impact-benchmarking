@@ -141,7 +141,10 @@ def train_blstm(X_train, y_train, X_test, n_features, output_length, batch_size,
     experiments = tqdm(range(n_experiments))
     for i in experiments:
         experiments.set_description('Monte Carlo Dropout ... Experiments')
-        experiment_predictions.append(target_scaler.inverse_transform(bayesian_lstm.predict(X_test)))
+        if target_scaler == None:
+            experiment_predictions.append(bayesian_lstm.predict(X_test))
+        else:
+            experiment_predictions.append(target_scaler.inverse_transform(bayesian_lstm.predict(X_test)))
      
     y_pred = pd.DataFrame(np.array(experiment_predictions).T, 
                           columns=['R0_'+str(i) for i in range(n_experiments)])
