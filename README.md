@@ -14,6 +14,8 @@ This repository accompanies our paper submitted to NeurIPS 2022 Datasets and Ben
 * ``models/``: Python scripts containing the R0 malaria model as well as the ML surrogate models (BLSTM and RFQR).
 * ``trained_models/``: Folder in which trained ML models are saved.
 * ``utils/``: Python scripts for evaluation and visualization of results.
+* ``malaria_modeling.ipynb``: Python notebook for simulating the precipitation- and temperature-driven malaria transmission coefficient `R0`.
+* ``ensemble_modeling.ipynb``: Python notebook for training surrogate models to predict uncertainties from ensemble weather forecasts. 
 
 ## Content:
 
