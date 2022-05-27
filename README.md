@@ -2,7 +2,7 @@
 
 This repository accompanies our paper submitted to NeurIPS 2022 Datasets and Benchmarks track. 
 
-Abstract: 
+**Abstract:** 
 
 **Contact:** Julian Kuehnert [(julian [dot] kuehnert [at] ibm [dot] com)](mailto:julian.kuehnert@ibm.com)
 
