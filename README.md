@@ -15,7 +15,7 @@ This repository accompanies our paper submitted to NeurIPS 2022 Datasets and Ben
 * ``trained_models/``: Folder in which trained ML models are saved.
 * ``utils/``: Python scripts for evaluation and visualization of results.
 
-## Content
+## Content:
 
 ### Dataset
 Seasonal weather forecasts of precipitation and temperature for coordinate in Nairobi, Kenya:
@@ -27,7 +27,6 @@ Modeled malaria transmission coefficient R0, simulated using the climate-driven 
 ![R0](figures/R0_2021.png)
 
 ## License: 
-This work is made available under [Attribution 4.0 International (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/legalcode) license. ![CC BY 4.0][cc-by-shield]
 
 
-## Citation
+## Citation:
