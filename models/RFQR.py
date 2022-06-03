@@ -6,7 +6,7 @@ from joblib import dump, load
 import pandas as pd
 import numpy as np
 
-def train_rfqr(X_train, y_train, X_test, random_state, min_samples_split, n_estimators, n_jobs, target_scaler, verbose=True, save_model=True, load_model=None, quantiles=[0.1587, 0.50, 0.8413], labels=['R0 lower', 'R0 mean', 'R0 upper']):
+def train_rfqr(X_train, y_train, X_test, random_state, min_samples_split, n_estimators, n_jobs, target_scaler, split, sequence_length, n_features, verbose=True, save_model=True, load_model=None, quantiles=[0.1587, 0.50, 0.8413], labels=['R0 lower', 'R0 mean', 'R0 upper']):
 
     X_train = X_train.reshape(X_train.shape[0],-1)
     X_test = X_test.reshape(X_test.shape[0],-1)
@@ -23,7 +23,16 @@ def train_rfqr(X_train, y_train, X_test, random_state, min_samples_split, n_esti
         rfqr.fit(X_train, y_train)
 
         if save_model:
-            dump(rfqr, 'trained_models/RFQR_train2017-2020_predict2021_feat4_excludeR0_predict50th.joblib') 
+            dump(rfqr,
+                 'trained_models/RFQR'
+                 +'_'+split
+                 +'_seq'+str(sequence_length)
+                 +'_feat'+str(n_features)
+                 +'_rs'+str(random_state)
+                 +'_minss'+str(min_samples_split)
+                 +'_estims'+str(n_estimators)
+                 +'_jobs'+str(n_jobs)
+                 +'.joblib')
     else:
         print('Loading model ...')
         rfqr = load('trained_models/'+load_model)

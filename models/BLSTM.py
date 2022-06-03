@@ -65,7 +65,7 @@ class BayesianLSTM(nn.Module):
         return self(torch.tensor(X, dtype=torch.float32)).view(-1).detach().numpy()
     
     
-def train_blstm(X_train, y_train, X_test, n_features, output_length, batch_size, n_epochs, learning_rate, sequence_length, n_experiments, target_scaler, save_model=True, load_model=None):
+def train_blstm(X_train, y_train, X_test, n_features, output_length, batch_size, n_epochs, learning_rate, sequence_length, n_experiments, target_scaler, split, save_model=True, load_model=None):
     
     
     if load_model == None: 
@@ -118,12 +118,13 @@ def train_blstm(X_train, y_train, X_test, n_features, output_length, batch_size,
         
         if save_model:
             torch.save(bayesian_lstm.state_dict(),
-                       'trained_models/BLSTM_train2017-2020_predict2021_e200_t0-01_seq'
-                       +str(sequence_length)
-                       +'_feat'
-                       +str(n_features)
-                       +'_bs'
-                       +str(batch_size)
+                       'trained_models/BLSTM'
+                       +'_'+split
+                       +'_seq'+str(sequence_length)
+                       +'_feat'+str(n_features)
+                       +'_bs'+str(batch_size)
+                       +'_eps'+str(n_epochs)
+                       +'_lr'+str(learning_rate)
                        +'.pth')
             
         pd.DataFrame(loss_l, columns=['Loss']).to_csv('trained_models/blstm_loss.csv')
