@@ -28,6 +28,15 @@ Seasonal weather forecasts of precipitation and temperature for coordinate in Na
 Modeled malaria transmission coefficient R0, simulated using the climate-driven R0 model:
 ![R0](figures/R0_2021.png)
 
+## Set up
+
+### Prerequisites
+
+Here we assume python3.9 and mac/linux, which are not necessarily mandatory.
+
+    $ pip install jupyter numpy
+    $ pip install -r requirements.txt
+
 ## License: 
 
 
