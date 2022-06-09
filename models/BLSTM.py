@@ -10,20 +10,21 @@ import numpy as np
 from tqdm import tqdm
 
 
+# We reimplemented referring to the original Bayesian LSTM implementation in Pytorch by Pawarit Laosunthara found at:
+#   https://github.com/PawaritL/BayesianLSTM
 class BayesianLSTM(nn.Module):
 
-    def __init__(self, n_features, output_length, batch_size):
-
+    def __init__(self, input_size, output_length, batch_size, hidden_size_1=128, hidden_size_2=32, dropout_probability=0.5):
         super(BayesianLSTM, self).__init__()
 
         self.batch_size = batch_size # user-defined
 
-        self.hidden_size_1 = 128 # number of encoder cells (from paper)
-        self.hidden_size_2 = 32 # number of decoder cells (from paper)
+        self.hidden_size_1 = hidden_size_1 # number of encoder cells (default value 128 from paper)
+        self.hidden_size_2 = hidden_size_2 # number of decoder cells (default value 32 from paper)
         self.stacked_layers = 2 # number of (stacked) LSTM layers for each stage
-        self.dropout_probability = 0.5 # arbitrary value (the paper suggests that performance is generally stable across all ranges)
+        self.dropout_probability = dropout_probability # arbitrary value (the paper suggests that performance is generally stable across all ranges)
 
-        self.lstm1 = nn.LSTM(n_features, 
+        self.lstm1 = nn.LSTM(input_size, 
                              self.hidden_size_1, 
                              num_layers=self.stacked_layers,
                              batch_first=True)
@@ -33,29 +34,27 @@ class BayesianLSTM(nn.Module):
                              batch_first=True)
         
         self.fc = nn.Linear(self.hidden_size_2, output_length)
+        
         self.loss_fn = nn.MSELoss()
         
     def forward(self, x):
         batch_size, seq_len, _ = x.size()
 
-        hidden = self.init_hidden1(batch_size)
+        hidden = self.init_hidden(batch_size, self.hidden_size_1)
         output, _ = self.lstm1(x, hidden)
         output = F.dropout(output, p=self.dropout_probability, training=True)
-        state = self.init_hidden2(batch_size)
+        
+        state = self.init_hidden(batch_size, self.hidden_size_2)
         output, state = self.lstm2(output, state)
         output = F.dropout(output, p=self.dropout_probability, training=True)
+        
         output = output[:, -1, :] # take the last decoder cell's outputs
         y_pred = self.fc(output)
         return y_pred
         
-    def init_hidden1(self, batch_size):
-        hidden_state = Variable(torch.zeros(self.stacked_layers, batch_size, self.hidden_size_1))
-        cell_state = Variable(torch.zeros(self.stacked_layers, batch_size, self.hidden_size_1))
-        return hidden_state, cell_state
-    
-    def init_hidden2(self, batch_size):
-        hidden_state = Variable(torch.zeros(self.stacked_layers, batch_size, self.hidden_size_2))
-        cell_state = Variable(torch.zeros(self.stacked_layers, batch_size, self.hidden_size_2))
+    def init_hidden(self, batch_size, hidden_size):
+        hidden_state = Variable(torch.zeros(self.stacked_layers, batch_size, hidden_size))
+        cell_state = Variable(torch.zeros(self.stacked_layers, batch_size, hidden_size))
         return hidden_state, cell_state
     
     def loss(self, pred, truth):
@@ -69,9 +68,7 @@ def train_blstm(X_train, y_train, X_test, n_features, output_length, batch_size,
     
     
     if load_model == None: 
-        bayesian_lstm = BayesianLSTM(n_features=n_features,
-                                     output_length=output_length,
-                                     batch_size = batch_size)
+        bayesian_lstm = BayesianLSTM(n_features, output_length, batch_size)
 
         criterion = torch.nn.MSELoss()
         optimizer = torch.optim.Adam(bayesian_lstm.parameters(), lr=learning_rate)
@@ -131,9 +128,7 @@ def train_blstm(X_train, y_train, X_test, n_features, output_length, batch_size,
 
     else:
         print('Loading model ...')
-        bayesian_lstm = BayesianLSTM(n_features=n_features,
-                                     output_length=output_length,
-                                     batch_size = batch_size)
+        bayesian_lstm = BayesianLSTM(n_features, output_length, batch_size)
         bayesian_lstm.load_state_dict(torch.load('trained_models/'+load_model))
         bayesian_lstm.eval()
     
