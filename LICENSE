@@ -1,3 +1,18 @@
+DATASET LICENSE
+
+    Dataset created by The Weather Company, an IBM business. This service is
+    based on data and products of the European Center for Medium-range Weather
+    Forecasts (ECMWF-Archive and ECMWF-RT). Generated using Copernicus Climate
+    Change Service information [2019 and ongoing]. ECMWF Archive data published
+    under a Creative Commons Attribution 4.0 International (CC BY 4.0) 
+    https://creativecommons.org/licenses/by/4.0/ Disclaimer: Neither the 
+    European Commission nor ECMWF is responsible for any use that may be made
+    of the information it contains.
+
+
+
+CODE LICENSE
+
                                  Apache License
                            Version 2.0, January 2004
                         http://www.apache.org/licenses/
