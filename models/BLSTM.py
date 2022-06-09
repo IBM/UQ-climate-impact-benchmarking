@@ -10,8 +10,9 @@ import numpy as np
 from tqdm import tqdm
 
 
-# We reimplemented referring to the original Bayesian LSTM implementation in Pytorch by Pawarit Laosunthara found at:
-#   https://github.com/PawaritL/BayesianLSTM
+# We reimplemented referring to the original Bayesian LSTM implementation in 
+# Pytorch by Pawarit Laosunthara found at:
+# https://github.com/PawaritL/BayesianLSTM
 class BayesianLSTM(nn.Module):
 
     def __init__(self, input_size, output_length, batch_size, hidden_size_1=128, hidden_size_2=32, dropout_probability=0.5):
@@ -82,7 +83,6 @@ def train_blstm(X_train, y_train, X_test, n_features, output_length, batch_size,
             epochs.set_description('Training model ... Epochs')
             start_epoch = time.time()
 
-            #loss_l1 = []
             for b in range(0, len(X_train), batch_size):
                 torch_features = X_train[b:b+batch_size,:,:]
                 torch_target =  y_train[b:b+batch_size]    
@@ -99,12 +99,6 @@ def train_blstm(X_train, y_train, X_test, n_features, output_length, batch_size,
             end_epoch = time.time()
             elapsed = end_epoch - start_epoch
             times.append(elapsed)
-
-            #loss_l1 += [loss.item()]
-            #loss_l=np.array(loss_l)
-            #loss_l = np.append(loss_l, np.array(loss_l1).mean())
-            #epoch_l =np.array(epoch_l) 
-            #epoch_l = np.append(epoch_l, np.array([e]))
             
             epochs.set_postfix(loss=loss.item())
             loss_l += [loss.item()] 

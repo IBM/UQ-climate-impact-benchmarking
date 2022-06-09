@@ -1,4 +1,5 @@
-# Surrogate ensemble modeling for dynamic climate impact models
+<<<<<<< HEAD
+# A Surrogate Model Benchmark for Dynamic Climate Impact Models
 
 This repository accompanies our paper submitted to NeurIPS 2022 Datasets and Benchmarks track. 
 
