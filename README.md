@@ -28,14 +28,36 @@ Seasonal weather forecasts of precipitation and temperature for coordinate in Na
 Modeled malaria transmission coefficient R0, simulated using the climate-driven R0 model:
 ![R0](figures/R0_2021.png)
 
-## Set up
+## Running Benchmarks
 
-### Prerequisites
+### Prerequisites and Python modules
 
 Here we assume python3.9 and mac/linux, which are not necessarily mandatory.
 
     $ pip install jupyter numpy
     $ pip install -r requirements.txt
+
+### Generate R0 for malaria model variables
+
+Run through:
+
+    Malaria_modeling.ipynb
+
+for dataset preparation.  This will generate the ground truth data:
+
+    datasets/R0_malaria_model_variables.csv
+
+from
+
+    datasets/seasonal_forecasts.csv
+
+### Surrogate modeling
+
+Surrogate Ensemble Modeling for Dynamic Climate Impact Models can be run as:
+
+    ensemble_modeling.ipynb
+
+Enjoy!
 
 ## License: 
 
