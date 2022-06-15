@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/500922238.svg)](https://zenodo.org/badge/latestdoi/500922238)
+
 # A Surrogate Model Benchmark for Dynamic Climate Impact Models
 
 This repository accompanies our paper submitted to [NeurIPS 2022 Datasets and Benchmarks Track](https://neurips.cc/Conferences/2022/CallForDatasetsBenchmarks). 
